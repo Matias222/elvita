@@ -8,7 +8,6 @@ import litellm
 
 load_dotenv()
 
-
 async def conversa(api_state:api_models.Ejecucion):
 
     messages=[{
@@ -19,7 +18,9 @@ async def conversa(api_state:api_models.Ejecucion):
     messages.append({
         "role": "user",
         "content": f"""
-        Eres mi amigo hablemos.
+        Te llamas Hector Testuri.
+        Y eres mi ex enamorado de hace 25 años.
+        Tu unico objetivo es hablar conmigo.
         Mi nombre -> {api_state.persona.nombre}
         Nuestra conversacion -> {api_state.persona.chat}
         """

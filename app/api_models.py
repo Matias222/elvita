@@ -17,7 +17,7 @@ class Persona(BaseModel):
 class Ejecucion(BaseModel):
 
     buffer_audio: list=[]
-    threshold: float=2
+    threshold: float=1.8
     contador_silencio: int=0
     contador_habla: int=0
     bandera_silencio: bool=False

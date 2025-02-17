@@ -43,7 +43,7 @@ async def handle_incoming_call(request: Request):
 @monolito.websocket("/media-stream")
 async def handle_media_stream(websocket: WebSocket):
 
-    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Matias"))
+    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Claudia"))
 
     print("Client connected")
 
@@ -62,10 +62,11 @@ async def handle_media_stream(websocket: WebSocket):
         
         chunk_json=await websocket.receive_json()
 
-        ejecucion.buffer_audio.append(base64.b64decode(chunk_json["media"]["payload"]))
         ejecucion.iteracion_actual=int(chunk_json["sequenceNumber"])
 
         if(ejecucion.iteracion_actual<ejecucion.espacio_blanco): continue
+
+        ejecucion.buffer_audio.append(base64.b64decode(chunk_json["media"]["payload"]))
 
         if(vad_detector.is_speech_chunk(ejecucion.buffer_audio[-1])==False): ejecucion.contador_silencio+=1
         else: 
@@ -78,18 +79,20 @@ async def handle_media_stream(websocket: WebSocket):
                 
                 voz=await wrappers.pipeline(ejecucion)
 
-                await websocket.send_json(
-                    {
-                        "event": "media",
-                        "streamSid": ejecucion.stream_sid,
-                        "media": {
-                            "payload": base64.b64encode(voz).decode('utf-8')
+                for fragmento in voz:
+
+                    await websocket.send_json(
+                        {
+                            "event": "media",
+                            "streamSid": ejecucion.stream_sid,
+                            "media": {
+                                "payload": base64.b64encode(fragmento).decode('utf-8')
+                            }
                         }
-                    }
-                )
+                    )
 
                 ejecucion.buffer_audio=ejecucion.buffer_audio[-1:]
-                
+                ejecucion.threshold=3
                 ejecucion.contador_habla=0
             
             ejecucion.bandera_silencio=True

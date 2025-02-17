@@ -21,6 +21,10 @@ async def pipeline(ejecucion:api_models.Ejecucion):
 
     voz=await ai_calls.generar_voz(respuesta)
 
-    ejecucion.espacio_blanco=int((time.time()-st)*1.15*50)+ejecucion.iteracion_actual
+    tiempo_total=time.time()-st
+
+    ejecucion.espacio_blanco=tiempo_total*1.1*50+aux_functions.get_audio_duration_ms(voz)/20+ejecucion.iteracion_actual
+
+    print("Tiempo total demorado ->",tiempo_total)
 
     return voz
