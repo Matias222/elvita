@@ -19,12 +19,13 @@ async def generar_voz(texto:str):
 
   abuela="eBthAb30UYbt2nojGXeA"
   jorge="HAsl3FenyWHYwECSP6Hl"
+  cristina="CaJslL1xziwefCeTNzHv"
 
   results = eleven_client.text_to_speech.convert_as_stream(
-    voice_id=jorge,
+    voice_id=cristina,
     output_format="ulaw_8000",
     text=texto,
-    model_id="eleven_multilingual_v2")
+    model_id="eleven_flash_v2_5")
 
   out = b''
 
@@ -44,7 +45,7 @@ async def transcript(path:str):
   data = {
   "language": "spanish",
   "response_format": "json",
-  "prompt": "El audio es de una persona mayor peruana, presta atención a regionalismos y peruanismos. Es una grabación de una llamada, presta atención a las pausas."
+  "prompt": "El audio ha escuchar es recolectado en tiempo real de una llamada telefónica. En caso no detectas nada, devuelve una cadena vacia."
   }
 
   async with AsyncClient(timeout=60) as client:

@@ -31,7 +31,7 @@ async def handle_incoming_call(request: Request):
     connect = Connect()
     
     connect.stream(
-        url=f"wss://c913-179-6-6-188.ngrok-free.app/media-stream",
+        url=f"wss://e3ca-2800-200-ea80-14e-7c14-a6c9-5d3c-88ce.ngrok-free.app/media-stream",
         parameter1_name="numero_celular",
         parameter1_value=caller_number
     )
@@ -43,7 +43,7 @@ async def handle_incoming_call(request: Request):
 @monolito.websocket("/media-stream")
 async def handle_media_stream(websocket: WebSocket):
 
-    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Claudia"))
+    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Mercedes",nombre_asistente="Elvita"))
 
     print("Client connected")
 
@@ -51,8 +51,6 @@ async def handle_media_stream(websocket: WebSocket):
 
     conectado=await websocket.receive_json()
     info_call=await websocket.receive_json()
-
-    #Call a la BD
 
     print(info_call)
 
@@ -92,7 +90,7 @@ async def handle_media_stream(websocket: WebSocket):
                     )
 
                 ejecucion.buffer_audio=ejecucion.buffer_audio[-1:]
-                ejecucion.threshold=3
+                ejecucion.threshold=3.5
                 ejecucion.contador_habla=0
             
             ejecucion.bandera_silencio=True

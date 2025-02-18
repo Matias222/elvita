@@ -13,6 +13,7 @@ class Persona(BaseModel):
 
     chat: list[Chat]=[]
     nombre: str
+    nombre_asistente: str
 
 class Ejecucion(BaseModel):
 

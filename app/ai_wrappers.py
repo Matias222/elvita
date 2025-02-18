@@ -31,3 +31,17 @@ async def call_open(messages,formato_respuesta,modelo="openai/gpt-4o-mini",tempe
     )
 
     return response
+
+async def call_claude(sistema,messages,tools,modelo,temperatura,tipo_funciones="auto"):
+  
+  response_claude = await client.messages.create(
+      model=modelo,
+      system=sistema,
+      messages=messages,
+      tools=tools,
+      tool_choice={"type": tipo_funciones,"disable_parallel_tool_use":True},
+      temperature=temperatura,
+      max_tokens=8000
+  )
+
+  return response_claude

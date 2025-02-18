@@ -3,7 +3,7 @@ import time
 
 async def pipeline(ejecucion:api_models.Ejecucion):
 
-    audio_guardado=aux_functions.save_audio_from_chunks(ejecucion.buffer_audio)
+    audio_guardado=aux_functions.save_audio_from_chunks(ejecucion)
 
     st=time.time()
 
