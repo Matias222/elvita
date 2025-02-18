@@ -26,6 +26,9 @@ class Ejecucion(BaseModel):
     persona: Persona
     espacio_blanco: float=0
     iteracion_actual: int=0
+    buffer_respuesta: list=[]
+    indice_trimeo:int=0
+    frames_respuesta: int=1
 
 class Respuesta(BaseModel):
 

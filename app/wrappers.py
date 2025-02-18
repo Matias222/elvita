@@ -1,5 +1,6 @@
 from app import aux_functions, api_models, ai_calls, emma
 import time
+import math
 
 async def pipeline(ejecucion:api_models.Ejecucion):
 
@@ -23,8 +24,10 @@ async def pipeline(ejecucion:api_models.Ejecucion):
 
     tiempo_total=time.time()-st
 
-    ejecucion.espacio_blanco=tiempo_total*1.1*50+aux_functions.get_audio_duration_ms(voz)/20+ejecucion.iteracion_actual
+    ejecucion.frames_respuesta=math.floor((aux_functions.get_audio_duration_ms(voz)*1.0/len(voz))/20.)
 
-    print("Tiempo total demorado ->",tiempo_total)
+    ejecucion.espacio_blanco=tiempo_total*1.1*50+ejecucion.iteracion_actual#+aux_functions.get_audio_duration_ms(voz)/20
+
+    print("Tiempo total demorado ->",tiempo_total,"Frames por respuesta ->",ejecucion.frames_respuesta)
 
     return voz

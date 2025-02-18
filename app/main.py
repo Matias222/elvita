@@ -64,42 +64,54 @@ async def handle_media_stream(websocket: WebSocket):
 
         if(ejecucion.iteracion_actual<ejecucion.espacio_blanco): continue
 
+        if(len(ejecucion.buffer_respuesta)!=0 and ejecucion.iteracion_actual%ejecucion.frames_respuesta==0):
+
+            print("Enviando",ejecucion.iteracion_actual)
+
+            await websocket.send_json(
+                {
+                    "event": "media",
+                    "streamSid": ejecucion.stream_sid,
+                    "media": {
+                        "payload": base64.b64encode(ejecucion.buffer_respuesta[0]).decode('utf-8')
+                    }
+                }
+            )
+            ejecucion.buffer_respuesta.pop(0)
+
+        if(len(ejecucion.buffer_respuesta)==0 and ejecucion.bandera_silencio==True): ejecucion.buffer_audio=ejecucion.buffer_audio[-ejecucion.indice_trimeo:] #Aca el trimeo es por indice
+
+
         ejecucion.buffer_audio.append(base64.b64decode(chunk_json["media"]["payload"]))
 
         if(vad_detector.is_speech_chunk(ejecucion.buffer_audio[-1])==False): ejecucion.contador_silencio+=1
         else: 
             ejecucion.contador_habla+=1
-            if(ejecucion.contador_habla>=10 and ejecucion.bandera_silencio==True): ejecucion.contador_silencio=0
+            if(ejecucion.contador_habla>=55 and ejecucion.bandera_silencio==True): ejecucion.contador_silencio=0
 
         if(ejecucion.contador_silencio>=ejecucion.threshold*50):
             
             if(ejecucion.bandera_silencio==False): 
                 
                 voz=await wrappers.pipeline(ejecucion)
+                ejecucion.buffer_respuesta=voz
 
-                for fragmento in voz:
+                print("Len Voz",len(ejecucion.buffer_respuesta))
 
-                    await websocket.send_json(
-                        {
-                            "event": "media",
-                            "streamSid": ejecucion.stream_sid,
-                            "media": {
-                                "payload": base64.b64encode(fragmento).decode('utf-8')
-                            }
-                        }
-                    )
-
-                ejecucion.buffer_audio=ejecucion.buffer_audio[-1:]
-                ejecucion.threshold=3.5
+                ejecucion.contador_silencio+=(3-ejecucion.threshold)*50*1.1
+                ejecucion.threshold=3
                 ejecucion.contador_habla=0
-            
+                ejecucion.indice_trimeo=len(ejecucion.buffer_respuesta)
+
             ejecucion.bandera_silencio=True
 
-            print("Silencio")
+            print("Silencio",ejecucion.iteracion_actual)
 
         else:
+
+            ejecucion.buffer_respuesta=[]
             ejecucion.bandera_silencio=False
-            print("Hablando")
+            print("Hablando",ejecucion.iteracion_actual)
 
         #acumular hasta cierto threshold luego vad filter, en base a eso openai clals
         #como hago para procesar mientras el bucket sigue? al final todas las calls se acumulan, no? igual todo puede ser asincrono? y espero al vacio y ahi lo mando?
