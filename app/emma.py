@@ -1,5 +1,5 @@
 from app import api_models, ai_wrappers
-from app.prompts import elvita, dulce
+from app.prompts import elvita, dulce, maxilar_demo
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -11,14 +11,18 @@ load_dotenv()
 
 async def conversa(ejecucion:api_models.Ejecucion):
 
-    messages=[{"role": "system", "content": elvita.sistema_prompt(ejecucion)}]
+    messages=[{"role": "system", "content": maxilar_demo.sistema_prompt(ejecucion)}]
 
-    messages.append({"role": "user","content": elvita.usuario_prompt(ejecucion)})
+    messages.append({"role": "user","content": maxilar_demo.usuario_prompt(ejecucion)})
 
     for i in ejecucion.persona.chat: 
 
         messages.append({"role": "user", "content": str({"respuesta":i.persona})})
         if(i.ia!=None): messages.append({"role": "assistant", "content": str({"respuesta":i.ia})})
+
+    if(len(ejecucion.persona.chat)==1): return "Buenas tardes doctor Diego. La señora Torres de la extracción de las 2pm, presente sangrado y un excesivo dolor. Quiere verlo. ¿Qué hacemos?"
+    if(len(ejecucion.persona.chat)==2): return "Sí, revisé con ella el protocolo paso a paso. Tomó el naproxeno hace 3 horas pero el dolor está aumentando. Ya le pedí fotos y se ve más inflamada de lo normal."
+    if(len(ejecucion.persona.chat)==3): return "Sí doctor, puedo acomodarla en dos horas. Ya reorganicé la agenda para una atención de emergencia."
 
     response = await ai_wrappers.call_open(messages,api_models.Respuesta,temperatura=0.55)
 

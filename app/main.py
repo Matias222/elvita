@@ -31,7 +31,7 @@ async def handle_incoming_call(request: Request):
     connect = Connect()
     
     connect.stream(
-        url=f"wss://e3ca-2800-200-ea80-14e-7c14-a6c9-5d3c-88ce.ngrok-free.app/media-stream",
+        url=f"wss://0923-45-236-45-53.ngrok-free.app/media-stream",
         parameter1_name="numero_celular",
         parameter1_value=caller_number
     )
@@ -43,7 +43,7 @@ async def handle_incoming_call(request: Request):
 @monolito.websocket("/media-stream")
 async def handle_media_stream(websocket: WebSocket):
 
-    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Mercedes",nombre_asistente="Elvita"))
+    ejecucion=api_models.Ejecucion(persona=api_models.Persona(nombre="Diego",nombre_asistente="Carla"))
 
     print("Client connected")
 

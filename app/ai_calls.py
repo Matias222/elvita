@@ -22,7 +22,7 @@ async def generar_voz(texto:str):
   cristina="CaJslL1xziwefCeTNzHv"
 
   results = eleven_client.text_to_speech.convert_as_stream(
-    voice_id=cristina,
+    voice_id="9oPKasc15pfAbMr7N6Gs",
     output_format="ulaw_8000",
     text=texto,
     model_id="eleven_flash_v2_5")
